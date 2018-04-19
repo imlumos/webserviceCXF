@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="    
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd  
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd  
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd  
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<!-- <import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" /> -->
+
+	<!-- 自动扫描 -->
+	<context:component-scan base-package="com.ilumos.webservice" />
+
+	<!-- 定义服务提供者 -->
+	<!-- 发布cxf服务
+		address：是webservice接口路径
+		webservice地址是：http://localhost:8086/webservice/helloWorld
+		/webservice/是在web.xml配置的cxf的servlet的拦截路径
+		serviceClass：就是 portType(接口类型)-->
+	<jaxws:server address="/helloWorld" serviceClass="com.ilumos.webservice.HelloWorld">
+		<jaxws:serviceBean>
+			<ref bean="helloWorld" />
+		</jaxws:serviceBean>
+		<!-- 添加in拦截器 -->
+		<jaxws:inInterceptors>
+			<bean class="org.apache.cxf.interceptor.LoggingInInterceptor" />
+			<bean class="com.ilumos.interceptor.MyInterceptor" />
+		</jaxws:inInterceptors>
+		<!-- 添加out拦截器 -->
+
+		<jaxws:outInterceptors>
+			<bean class="org.apache.cxf.interceptor.LoggingInInterceptor" />
+		</jaxws:outInterceptors>
+	</jaxws:server>
+</beans>
